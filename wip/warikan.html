@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8">
   <script>
+    var counter = 0;
     function AddTableRows() {
+      counter++;
       var table1 = document.getElementById("table1");
       var counter = table1.rows.length++;
       var row1 = table1.insertRow(counter);
@@ -14,10 +16,14 @@
       cell1.setAttribute("class", "contain");
       cell2.setAttribute("class", "price");
 
-      var HTML1 = '<input type="text" name="contain" placeholder="品目">';
+      var HTML1 = '<input type="text" name="contain" placeholder="品目" id="' + counter + '">';
       var HTML2 = '<input type="text" name="price" placeholder="0">円';
       cell1.innerHTML = HTML1;
       cell2.innerHTML = HTML2;
+
+      // 追加した行にフォーカスを当てる
+      var element = document.getElementById(counter);
+      element.focus();
     };
   </script>
   <title>Let's Warikan</title>
@@ -90,95 +96,96 @@
     </tr>
   </table>
 
-  <form method="GET" action="#">
-    <input type="button" value="Add" onclick='AddTableRows();'>
-  </form>
+  <button onclick='AddTableRows();'>Add</button>
 
   <p><input type="text" id="num" value="2">人で割る</p>
-  <div id="culculate">Warikan!</div>
-  <p id="result"></p>
+  <div>
+    <button id="culculate">Warikan!</button>
+    <p type="text" id="result"></p>
 
-  <div>
     <button id="copy">Copy to Clipboard</button>
-  </div>
-  <div>
     <button id="clear">CLEAR</button>
   </div>
 
   <script>
     (function() {
-      'use strict';
+        'use strict';
 
-      var sum = 0;
-      var numForm = document.getElementById('num');
-      var culculate = document.getElementById('culculate');
-      var result = document.getElementById('result');
-
-      numForm.addEventListener('click', function() {
-        this.select();
-      });
-
-      culculate.addEventListener('click', function() {
-        var priceForm = document.getElementsByName('price');
-        for (var i = 0; i < priceForm.length; i++) {
-          var n = parseInt(priceForm[i].value);
-          if (!isNaN(n)) sum += n;
-        }
-        var num = numForm.value;
-
-        if (num.match(/^[1-9][0-9]*$/)) {
-          // ok
-          if (sum % num === 0) {
-            result.innerHTML = '1人ちょうど' + (sum / num) + '円ずつ';
-          } else {
-            result.innerHTML = '割り切れないけど、1人' + (Math.floor(sum / num)) + '円です(切り捨て)';
-          }
-        } else {
-          // error
-          result.innerHTML = '入力された値に誤りがあります';
-        }
-      });
-
-      copy.addEventListener('click', function() {
-        var contains = document.getElementsByName('contain');
-        var prices = document.getElementsByName('price');
+        var sum = 0;
+        var numForm = document.getElementById('num');
+        var culculate = document.getElementById('culculate');
         var result = document.getElementById('result');
-        var obj = {};
-        for (var i = 0; i < contains.length; i++) {
-          obj[contains[i].value] = prices[i].value;
-        }
-        
-        if (result.innerHTML) {
-          obj['result'] = result.innerHTML;
-        }
 
-        var val = [];
-        for (var key in obj) {
-          if (key) {
-            val.push(key + '：' + obj[key] + '円');
-          }
-        };
-        var textval = val.join('\n');
+        numForm.addEventListener('click', function() {
+          this.select();
+        });
 
-        if (textval) {
-          var copyForm = document.createElement("textarea");
-          copyForm.textContent = textval;
-          var bodyElm = document.getElementsByTagName("body")[0];
-          bodyElm.appendChild(copyForm);
-          copyForm.select();
-          var retVal = document.execCommand('copy');
-          bodyElm.removeChild(copyForm);
-          alert('クリップボードにコピーしました');
-        } else {
-          alert('コピーするデータがありません');
-        }
-      });
+        culculate.addEventListener('click', function() {
+            var priceForm = document.getElementsByName('price');
+            for (var i = 0; i < priceForm.length; i++) {
+              var n = parseInt(priceForm[i].value);
+              if (!isNaN(n)) sum += n;
+            }
+            var num = numForm.value;
 
-      clear.addEventListener('click', function clearElement(element) {
-        // クリア処理
-      });
+            if (num.match(/^[1-9][0-9]*$/)) {
+              // ok
+              if (sum / num == 0) {
+                alert('入力がありません');
+              } else {
 
-    })();
+                if (sum % num === 0) {
+                  result.innerHTML = '1人ちょうど' + (sum / num) + '円ずつ';
+                } else {
+                  result.innerHTML = '割り切れないけど、1人' + (Math.floor(sum / num)) + '円です(切り捨て)';
+                }
+                // } else {
+                // // error
+                // result.innerHTML = '入力された値に誤りがあります';
+                // }
+              }
+            }
+            });
+
+          copy.addEventListener('click', function() {
+            var contains = document.getElementsByName('contain');
+            var prices = document.getElementsByName('price');
+            var result = document.getElementById('result');
+            var obj = {};
+            for (var i = 0; i < contains.length; i++) {
+              obj[contains[i].value] = prices[i].value;
+            }
+            if (result.innerHTML) {
+              obj['result'] = result.innerHTML;
+            }
+
+            var val = [];
+            for (var key in obj) {
+              if (key) {
+                val.push('・ ' + key + ' ： ' + obj[key] + '円');
+              }
+            };
+            var textval = val.join('\n');
+
+            if (textval) {
+              var copyForm = document.createElement("textarea");
+              copyForm.textContent = textval;
+              var bodyElm = document.getElementsByTagName("body")[0];
+              bodyElm.appendChild(copyForm);
+              copyForm.select();
+              var retVal = document.execCommand('copy');
+              bodyElm.removeChild(copyForm);
+              alert('クリップボードにコピーしました');
+            } else {
+              alert('コピーするデータがありません');
+            }
+          });
+
+          clear.addEventListener('click', function clearElement(element) {
+            // クリア処理
+          });
+
+        })();
   </script>
 </body>
 
