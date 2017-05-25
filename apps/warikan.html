@@ -32,6 +32,7 @@
       font-size: 14px;
       text-align: center;
       font-family: Arial, sans-serif;
+      width: 100%;
     }
 
     h1 {
@@ -71,7 +72,7 @@
 
     #culculate {
       margin: 30px auto;
-      width: 180px;
+      width: 100px;
       border-radius: 5px;
       background: skyblue;
       /*box-shadow: 0 4px 0 #e91b0c;
@@ -96,15 +97,15 @@
     </tr>
   </table>
 
-  <button onclick='AddTableRows();'>Add</button>
+  <p><button onclick='AddTableRows();'>Add</button>
+  <button id="dosum">Sum</button></p>
 
-  <p><input type="text" id="num" value="2">人で割る</p>
+  <span type="text" id="putsum"></span>円を
+  <span><input type="text" id="num" value="2">人で<button id="culculate">Warikan!</button></span>
   <div>
-    <button id="culculate">Warikan!</button>
     <p type="text" id="result"></p>
-
     <button id="copy">Copy to Clipboard</button>
-    <!-- <button id="clear">CLEAR</button> -->
+    <button onclick="location.reload();">CLEAR</button>
   </div>
 
   <script>
@@ -127,6 +128,7 @@
               if (!isNaN(n)) sum += n;
             }
             var num = numForm.value;
+            putsum.innerHTML = '合計' + sum;
 
             if (num.match(/^[1-9][0-9]*$/)) {
               if (sum / num == 0) {
@@ -157,9 +159,14 @@
             var val = [];
             for (var key in obj) {
               if (key) {
-                val.push('・ ' + key + ' ： ' + obj[key] + '円');
+                if (key == 'result') {
+                  val.push('・ ' + key + ' ： ' + obj[key] );
+                } else {
+                  val.push('・ ' + key + ' ： ' + obj[key] + '円');
+                }
               }
             };
+
             var textval = val.join('\n');
 
             if (textval) {
@@ -176,8 +183,14 @@
             }
           });
 
-          clear.addEventListener('click', function clearElement(element) {
-            // クリア処理
+          dosum.addEventListener('click', function () {
+            var prices = document.getElementsByName('price');
+            var sum = 0;
+            for (var i = 0; i < prices.length; i++) {
+              var n = parseInt(prices[i].value);
+              if (!isNaN(n)) sum += n;
+            }
+            putsum.innerHTML = '合計' + sum;
           });
 
         })();
